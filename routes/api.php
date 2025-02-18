@@ -1,17 +1,16 @@
 <?php
 
-use App\Models\User;
-use Illuminate\Http\Request;
+use App\Http\Controllers\Api\AttendeeController;
+use App\Http\Controllers\Api\EventController;
+use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Route;
 
-Route::get('/user', function (Request $request) {
-    return $request->user();
-})->middleware('auth:sanctum');
 
-Route::post('/login', function (Request $request) {
-    $user = User::where('email', $request->email)->first();
 
-    $token = $user->createToken('api-token')->plainTextToken;
 
-    return $token;
-});
+Route::apiResource('events', EventController::class);
+Route::apiResource('events.attendees', AttendeeController::class);
+
+Route::fallback(fn() => response()->json([
+    'message' => "Route not found"
+], Response::HTTP_NOT_FOUND));
