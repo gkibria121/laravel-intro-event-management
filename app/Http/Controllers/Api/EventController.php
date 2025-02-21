@@ -7,6 +7,7 @@ use App\Http\Resources\EventResource;
 use App\Http\Traits\CanLoadRelations;
 use App\Models\Event;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
 
 class EventController extends Controller
 {
@@ -39,6 +40,7 @@ class EventController extends Controller
     public function show(Event $event)
     {
 
+        Gate::authorize('view-event', $event);
         return new EventResource($this->loadRelations($event));
     }
 
