@@ -16,7 +16,7 @@ Route::post('/login', [AuthController::class, 'login']);
 
 Route::group(['middleware' => ['auth:sanctum']], function () {
 
-    Route::apiResource('events', EventController::class);
+    Route::apiResource('events', EventController::class)->middlewareFor('store', 'throttle:event_create');
     Route::apiResource('events.attendees', AttendeeController::class);
     Route::get('/user', [UserController::class, 'index']);
     Route::post('/logout', [AuthController::class, 'logout']);

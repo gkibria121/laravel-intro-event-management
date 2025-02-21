@@ -19,7 +19,7 @@ class EventController extends Controller
 
     use CanLoadRelations;
 
-
+    public function __construct() {}
 
     /**
      * Display a listing of the resource.
