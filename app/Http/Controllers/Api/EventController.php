@@ -7,6 +7,7 @@ use App\Http\Resources\EventResource;
 use App\Http\Traits\CanLoadRelations;
 use App\Models\Event;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Gate;
 
 class EventController extends Controller
@@ -16,6 +17,8 @@ class EventController extends Controller
     private array $allowedRelations = ['user', 'attendees'];
 
     use CanLoadRelations;
+
+
 
     /**
      * Display a listing of the resource.
@@ -55,8 +58,10 @@ class EventController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy(Event $event)
     {
-        //
+        Gate::authorize('delete', $event);
+        $event->delete();
+        return response()->json(status: Response::HTTP_NO_CONTENT);
     }
 }
