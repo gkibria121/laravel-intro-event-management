@@ -22,8 +22,6 @@ class EventController extends Controller
     public function index()
     {
 
-
-
         return EventResource::collection($this->loadRelations(Event::query())->get());
     }
 
