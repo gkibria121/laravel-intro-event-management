@@ -4,30 +4,27 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Http\Resources\EventResource;
+use App\Http\Traits\CanLoadRelations;
 use App\Models\Event;
 use Illuminate\Http\Request;
 
 class EventController extends Controller
 {
+
+
     private array $allowedRelations = ['user', 'attendees'];
+
+    use CanLoadRelations;
+
     /**
      * Display a listing of the resource.
      */
-    public function index(Request $request)
+    public function index()
     {
-        $includes = $request->get('include', '');
 
 
-        $relations = explode(',', $includes);
-        $filteredRelations = array_filter($relations, function ($relation) {
-            return in_array($relation, $this->allowedRelations);
-        });
-        $eventsBuilder = Event::query();
 
-
-        $eventsWithRelation = $eventsBuilder->with(...$filteredRelations);
-
-        return EventResource::collection($eventsWithRelation->paginate());
+        return EventResource::collection($this->loadRelations(Event::query())->get());
     }
 
     /**
@@ -41,9 +38,10 @@ class EventController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function show(Event $event)
     {
-        //
+
+        return new EventResource($this->loadRelations($event));
     }
 
     /**
