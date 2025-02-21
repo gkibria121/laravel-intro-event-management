@@ -3,16 +3,31 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\EventResource;
+use App\Models\Event;
 use Illuminate\Http\Request;
 
 class EventController extends Controller
 {
+    private array $allowedRelations = ['user', 'attendees'];
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        //
+        $includes = $request->get('include', '');
+
+
+        $relations = explode(',', $includes);
+        $filteredRelations = array_filter($relations, function ($relation) {
+            return in_array($relation, $this->allowedRelations);
+        });
+        $eventsBuilder = Event::query();
+
+
+        $eventsWithRelation = $eventsBuilder->with(...$filteredRelations);
+
+        return EventResource::collection($eventsWithRelation->paginate());
     }
 
     /**
