@@ -8,6 +8,7 @@ use App\Http\Traits\CanLoadRelations;
 use App\Models\Event;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
 
 class EventController extends Controller
@@ -34,7 +35,17 @@ class EventController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $validatedEvent = $request->validate([
+            'name' => 'required',
+            'description' => 'required|min:5',
+            'start_date' => 'required|date_format:Y-m-d',
+            'end_date' => 'required|date_format:Y-m-d'
+        ]);
+        $user = Auth::user();
+        Event::create([...$validatedEvent, 'user_id' => $user->id]);
+        return response()->json([
+            'message' => "Event created succssfully!"
+        ], Response::HTTP_CREATED);
     }
 
     /**
